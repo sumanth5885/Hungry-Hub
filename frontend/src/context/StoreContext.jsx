@@ -4,6 +4,7 @@ import axios from "axios";
 export const StoreContext = createContext(null);
 
 const StoreContextProvider = (props) => {
+    const [isLoading, setIsLoading] = useState(false);
     const [cartItems, setCartItems] = useState({});
     const url = "https://hungry-hub-backend-0cji.onrender.com";
     const [token, setTokenState] = useState(
@@ -109,8 +110,15 @@ const StoreContextProvider = (props) => {
     };
 
     const fetchFoodList = async () => {
-        const response = await axios.get(url + "/api/food/list");
-        setFoodList(response.data.data);
+        setIsLoading(true);
+        try {
+            const response = await axios.get(url + "/api/food/list");
+            setFoodList(response.data.data);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const loadCartData = async (token) => {
@@ -150,6 +158,7 @@ const StoreContextProvider = (props) => {
         userName,
         setUserName,
         handleLogout,
+        isLoading,
     };
 
     return (
